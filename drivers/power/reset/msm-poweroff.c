@@ -738,12 +738,12 @@ static int msm_restart_probe(struct platform_device *pdev)
 	} else {
 		dload_mode_addr = of_iomap(np, 0);
 		if (!dload_mode_addr)
-			pr_err("unable to map imem DLOAD offset\n");
+			pr_debug("unable to find DT imem DLOAD mode node\n");
 	}
 
 	np = of_find_compatible_node(NULL, NULL, EDL_MODE_PROP);
 	if (!np) {
-		pr_err("unable to find DT imem EDLOAD mode node\n");
+		pr_debug("unable to find DT imem EDLOAD mode node\n");
 	} else {
 		emergency_dload_mode_addr = of_iomap(np, 0);
 		if (!emergency_dload_mode_addr)
