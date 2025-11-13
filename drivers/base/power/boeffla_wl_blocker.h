@@ -16,8 +16,8 @@
 
 #define BOEFFLA_WL_BLOCKER_VERSION	"1.1.0"
 
-#define LIST_WL_DEFAULT				""
+#define LIST_WL_DEFAULT				"IPA_WS;IPCRTR_lpass_rx;IPCRTR_mpss_rx;mpss_IPCRTR;mgmt_txrx tx_cmp;ipc00000085_1481_LocApiMsgTask;qcom_sap_wakelock;qcom_rx_wakelock"
 
-#define LENGTH_LIST_WL				255
-#define LENGTH_LIST_WL_DEFAULT		100
+#define LENGTH_LIST_WL				2560
+#define LENGTH_LIST_WL_DEFAULT		(strlen(LIST_WL_DEFAULT) + 1)
 #define LENGTH_LIST_WL_SEARCH		LENGTH_LIST_WL + LENGTH_LIST_WL_DEFAULT + 5
