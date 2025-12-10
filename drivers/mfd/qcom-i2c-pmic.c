@@ -502,14 +502,30 @@ static int i2c_pmic_read(struct regmap *map, unsigned int reg, void *val,
 
 static int i2c_pmic_determine_initial_status(struct i2c_pmic *chip)
 {
-	int rc, i;
+	int rc, i, retry = 0;
+	int max_retries = 2;
 
 	for (i = 0; i < chip->num_periphs; i++) {
-		rc = i2c_pmic_read(chip->regmap,
-				chip->periph[i].addr | INT_SET_TYPE_OFFSET,
-				chip->periph[i].cached, IRQ_MAX_REGS);
+		retry = 0;
+		do {
+			rc = i2c_pmic_read(chip->regmap,
+					chip->periph[i].addr | INT_SET_TYPE_OFFSET,
+					chip->periph[i].cached, IRQ_MAX_REGS);
+			if (rc < 0) {
+				retry++;
+				if (retry < max_retries) {
+					pr_warn("I2C read retry %d for peripheral 0x%04x\n",
+						retry, chip->periph[i].addr);
+					msleep(10);
+				}
+			} else {
+				break;
+			}
+		} while (retry < max_retries);
+
 		if (rc < 0) {
-			pr_err("Couldn't read irq data rc=%d\n", rc);
+			pr_err("Couldn't read irq data for peripheral 0x%04x rc=%d\n",
+				chip->periph[i].addr, rc);
 			return rc;
 		}
 
