@@ -953,15 +953,24 @@ static int dsi_pll_10nm_lock_status(struct mdss_pll_resources *pll)
 	u32 status;
 	u32 const delay_us = 100;
 	u32 const timeout_us = 5000;
+	int retry_count = 0;
+	int max_retries = 2;
 
-	rc = readl_poll_timeout_atomic(pll->pll_base + PLL_COMMON_STATUS_ONE,
-				       status,
-				       ((status & BIT(0)) > 0),
-				       delay_us,
-				       timeout_us);
+	do {
+		rc = readl_poll_timeout_atomic(pll->pll_base + PLL_COMMON_STATUS_ONE,
+					       status,
+					       ((status & BIT(0)) > 0),
+					       delay_us,
+					       timeout_us);
+		if (rc)
+			retry_count++;
+		else
+			break;
+	} while (retry_count < max_retries);
+
 	if (rc)
-		pr_err("DSI PLL(%d) lock failed, status=0x%08x\n",
-			pll->index, status);
+		pr_warn("DSI PLL(%d) lock failed after %d retries, status=0x%08x\n",
+			pll->index, retry_count, status);
 
 	return rc;
 }
