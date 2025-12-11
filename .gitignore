@@ -123,3 +123,8 @@ kernel/configs/android-*.cfg
 #Ignoring Android.bp link file
 #
 Android.bp
+
+#
+#Ignoring some tips
+#
+git_command.txt
