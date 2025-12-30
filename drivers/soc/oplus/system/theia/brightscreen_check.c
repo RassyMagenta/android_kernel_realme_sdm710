@@ -312,11 +312,7 @@ static bool bright_check_error_happened_before(struct bright_data *bri_data)
 	}
 
 	pos = 0;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
 	len = kernel_read(fp, buf, sizeof(buf), &pos);
-#else
-	len = kernel_read(fp, pos, buf, sizeof(buf));
-#endif
 	if (len < 0) {
 		BRIGHT_DEBUG_PRINTK("read %s file error\n", BRIGHTSCREEN_HAPPENED_FILE);
 		goto out;
@@ -345,11 +341,7 @@ static int bright_mark_or_clear_error_happened_flag(struct bright_data *bri_data
 
 	//read to check whether write or not
 	pos = 0;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
 	len = kernel_read(fp, buf, sizeof(buf), &pos);
-#else
-	len = kernel_read(fp, pos, buf, sizeof(buf));
-#endif
 	if (len < 0) {
 		BRIGHT_DEBUG_PRINTK("read %s file error\n", BRIGHTSCREEN_HAPPENED_FILE);
 		goto out;
@@ -365,21 +357,13 @@ static int bright_mark_or_clear_error_happened_flag(struct bright_data *bri_data
 	//write begin
 	sprintf(buf, "%d\n", mark_or_clear);
 	pos = 0;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
 	len = kernel_write(fp, buf, strlen(buf), &pos);
-#else
-	len = kernel_write(fp, buf, sizeof(buf), pos);
-#endif
 	if (len < 0)
 		BRIGHT_DEBUG_PRINTK("write %s file error\n", BRIGHTSCREEN_HAPPENED_FILE);
 	//write end
 
 	pos = 0;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
 	kernel_read(fp, buf, sizeof(buf), &pos);
-#else
-	kernel_read(fp, pos, buf, sizeof(buf));
-#endif
 	BRIGHT_DEBUG_PRINTK("bright_mark_or_clear_error_happened_flag %s, mark:%d\n",
 		buf, mark_or_clear);
 out:
@@ -405,11 +389,7 @@ static int bright_write_error_count(struct bright_data *bri_data)
 	//read old error_count begin
 	if (have_read_old == false) {
 		pos = 0;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
 		len = kernel_read(fp, buf, sizeof(buf), &pos);
-#else
-		len = kernel_read(fp, pos, buf, sizeof(buf));
-#endif
 		if (len < 0) {
 			BRIGHT_DEBUG_PRINTK("read %s file error\n", BRIGHTSCREEN_COUNT_FILE);
 			goto out;
@@ -426,20 +406,12 @@ static int bright_write_error_count(struct bright_data *bri_data)
 	sprintf(buf, "%d\n", bri_data->error_count_new);
 
 	pos = 0;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
 	len = kernel_write(fp, buf, strlen(buf), &pos);
-#else
-	len = kernel_write(fp, buf, sizeof(buf), pos);
-#endif
 	if (len < 0)
 		BRIGHT_DEBUG_PRINTK("write %s file error\n", BRIGHTSCREEN_COUNT_FILE);
 
 	pos = 0;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
 	kernel_read(fp, buf, sizeof(buf), &pos);
-#else
-	kernel_read(fp, pos, buf, sizeof(buf));
-#endif
 	BRIGHT_DEBUG_PRINTK("bright_write_error_count %s\n", buf);
 
 out:

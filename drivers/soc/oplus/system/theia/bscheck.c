@@ -503,11 +503,7 @@ static bool black_check_error_happened_before(struct black_data *bla_data)
 	}
 
 	pos = 0;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
 	len = kernel_read(fp, buf, sizeof(buf), &pos);
-#else
-	len = kernel_read(fp, pos, buf, sizeof(buf));
-#endif
 	if (len < 0) {
 		BLACK_DEBUG_PRINTK("read %s file error\n", BLACKSCREEN_HAPPENED_FILE);
 		goto out;
@@ -536,11 +532,7 @@ static int black_mark_or_clear_error_happened_flag(struct black_data *bla_data, 
 
 	//read to check whether write or not
 	pos = 0;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
 	len = kernel_read(fp, buf, sizeof(buf), &pos);
-#else
-	len = kernel_read(fp, pos, buf, sizeof(buf));
-#endif
 	if (len < 0) {
 		BLACK_DEBUG_PRINTK("read %s file error\n", BLACKSCREEN_HAPPENED_FILE);
 		goto out;
@@ -556,21 +548,13 @@ static int black_mark_or_clear_error_happened_flag(struct black_data *bla_data, 
 	//write begin
 	sprintf(buf, "%d\n", mark_or_clear);
 	pos = 0;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
 	len = kernel_write(fp, buf, strlen(buf), &pos);
-#else
-	len = kernel_write(fp, buf, sizeof(buf), pos);
-#endif
 	if (len < 0)
 		BLACK_DEBUG_PRINTK("write %s file error\n", BLACKSCREEN_HAPPENED_FILE);
 	//write end
 
 	pos = 0;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
 	kernel_read(fp, buf, sizeof(buf), &pos);
-#else
-	kernel_read(fp, pos, buf, sizeof(buf));
-#endif
 	BLACK_DEBUG_PRINTK("black_mark_or_clear_error_happened_flag %s, mark:%d\n",
 		buf, mark_or_clear);
 out:
@@ -596,11 +580,7 @@ static int black_write_error_count(struct black_data *bla_data)
 	//read old error_count begin
 	if (have_read_old == false) {
 		pos = 0;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
 		len = kernel_read(fp, buf, sizeof(buf), &pos);
-#else
-		len = kernel_read(fp, pos, buf, sizeof(buf));
-#endif
 		if (len < 0) {
 			BLACK_DEBUG_PRINTK("read %s file error\n", BLACKSCREEN_COUNT_FILE);
 			goto out;
@@ -616,20 +596,12 @@ static int black_write_error_count(struct black_data *bla_data)
 	sprintf(buf, "%d\n", bla_data->error_count_new);
 
 	pos = 0;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
 	len = kernel_write(fp, buf, strlen(buf), &pos);
-#else
-	len = kernel_write(fp, buf, strlen(buf), pos);
-#endif
 	if (len < 0)
 		BLACK_DEBUG_PRINTK("write %s file error\n", BLACKSCREEN_COUNT_FILE);
 
 	pos = 0;
-#if (LINUX_VERSION_CODE >= KERNEL_VERSION(5, 4, 0))
 	kernel_read(fp, buf, sizeof(buf), &pos);
-#else
-	kernel_read(fp, pos, buf, sizeof(buf));
-#endif
 	BLACK_DEBUG_PRINTK("black_write_error_count %s\n", buf);
 
 out:
