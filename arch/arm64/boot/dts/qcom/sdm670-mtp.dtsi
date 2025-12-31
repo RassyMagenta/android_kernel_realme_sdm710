@@ -10,6 +10,10 @@
  * GNU General Public License for more details.
  */
 
+/* Device variant without NFC:
+ * pn544 / p61 / oplus-nfc-chipset commented
+ */
+
 #include <dt-bindings/gpio/gpio.h>
 #include "sdm670-pmic-overlay.dtsi"
 #include "sdm670-sde-display.dtsi"
@@ -72,6 +76,7 @@
 	nq@28 {
 		compatible = "nxp,pn544";
 		reg = <0x28>;
+		status = "disabled";
 		nxp,pn544-irq = <&pm660l_gpios 4 0x00>;
 		nxp,pn544-ven = <&pm660l_gpios 5 0x00>;
 		nxp,pn544-fw-dwnld = <&pm660l_gpios 3 0x00>;
@@ -89,7 +94,7 @@
 };
 
 &qupv3_se0_spi {
-    status = "ok";
+    status = "disabled";
 
     ese@0 {
         compatible = "nxp,p61";
@@ -296,11 +301,11 @@
 
 &soc {
 	//#ifdef OPLUS_FEATURE_CONNFCSOFT
-	nfc_chipset {
-		compatible = "oplus-nfc-chipset";
-		chipset-19651-11 = "NQ330";
-		chipset-19651-34 = "NQ330";
-	};
+//	nfc_chipset {
+//		compatible = "oplus-nfc-chipset";
+//		chipset-19651-11 = "NQ330";
+//		chipset-19651-34 = "NQ330";
+//	};
 	//#endif /* OPLUS_FEATURE_CONNFCSOFT */
 	gpio_keys {
 		compatible = "gpio-keys";
