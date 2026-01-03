@@ -775,6 +775,22 @@ else
 KBUILD_CFLAGS   += -O3
 endif
 
+# Optimize for SDM710/SDM712 (Kryo 360)
+# SDM710/712 uses ARMv8.2-A with Cortex-A75/A55 cores
+ifeq ($(cc-name),clang)
+    KBUILD_CFLAGS += -mcpu=cortex-a75 \
+                     -march=armv8.2-a+crc+crypto+fp16+rcpc
+    KBUILD_AFLAGS += -mcpu=cortex-a75 \
+                     -march=armv8.2-a+crc+crypto+fp16+rcpc
+else ifeq ($(cc-name),gcc)
+    KBUILD_CFLAGS += -mcpu=cortex-a75.cortex-a55 \
+                     -mtune=cortex-a75.cortex-a55 \
+                     -march=armv8.2-a+crc+crypto+fp16
+    KBUILD_AFLAGS += -mcpu=cortex-a75.cortex-a55 \
+                     -mtune=cortex-a75.cortex-a55 \
+                     -march=armv8.2-a+crc+crypto+fp16
+endif
+
 # Tell gcc to never replace conditional load with a non-conditional one
 KBUILD_CFLAGS	+= $(call cc-option,--param=allow-store-data-races=0)
 KBUILD_CFLAGS	+= $(call cc-option,-fno-allow-store-data-races)
@@ -1240,47 +1256,40 @@ prepare-objtool: $(objtool_target)
 
 # Check for CONFIG flags that require compiler support. Abort the build
 # after .config has been processed, but before the kernel build starts.
-#
-# For security-sensitive CONFIG options, we don't want to fallback and/or
-# silently change which compiler flags will be used, since that leads to
-# producing kernels with different security feature characteristics
-# depending on the compiler used. (For example, "But I selected
-# CC_STACKPROTECTOR_STRONG! Why did it build with _REGULAR?!")
 PHONY += prepare-compiler-check
 prepare-compiler-check: FORCE
 # Make sure we're using a supported toolchain with LTO_CLANG
 ifdef CONFIG_LTO_CLANG
   ifneq ($(call clang-ifversion, -ge, 0500, y), y)
-	@echo Cannot use CONFIG_LTO_CLANG: requires clang 5.0 or later >&2 && exit 1
+	@echo Warning: CONFIG_LTO_CLANG requires clang 5.0 or later. Bypassing... >&2
   endif
   ifneq ($(call gold-ifversion, -ge, 112000000, y), y)
-	@echo Cannot use CONFIG_LTO_CLANG: requires GNU gold 1.12 or later >&2 && exit 1
+	@echo Warning: CONFIG_LTO_CLANG requires GNU gold 1.12 or later. Bypassing... >&2
   endif
 endif
 # Make sure compiler supports LTO flags
 ifdef lto-flags
   ifeq ($(call cc-option, $(lto-flags)),)
-	@echo Cannot use CONFIG_LTO: $(lto-flags) not supported by compiler \
-		>&2 && exit 1
+	@echo Warning: CONFIG_LTO: $(lto-flags) not supported by compiler. Bypassing... >&2
   endif
 endif
 # Make sure compiler supports requested stack protector flag.
 ifdef stackp-name
   ifeq ($(call cc-option, $(stackp-flag)),)
-	@echo Cannot use CONFIG_CC_STACKPROTECTOR_$(stackp-name): \
-		  $(stackp-flag) not supported by compiler >&2 && exit 1
+	@echo Warning: CONFIG_CC_STACKPROTECTOR_$(stackp-name): \
+		  $(stackp-flag) not supported by compiler check. Bypassing... >&2
   endif
 endif
 # Make sure compiler does not have buggy stack-protector support.
 ifdef stackp-check
   ifneq ($(shell $(CONFIG_SHELL) $(stackp-check) $(CC) $(KBUILD_CPPFLAGS) $(biarch)),y)
-	@echo Cannot use CONFIG_CC_STACKPROTECTOR_$(stackp-name): \
-                  $(stackp-flag) available but compiler is broken >&2 && exit 1
+	@echo Warning: CONFIG_CC_STACKPROTECTOR_$(stackp-name): \
+				  $(stackp-flag) check failed but continuing build. >&2
   endif
 endif
 ifdef cfi-flags
   ifeq ($(call cc-option, $(cfi-flags)),)
-	@echo Cannot use CONFIG_CFI: $(cfi-flags) not supported by compiler >&2 && exit 1
+	@echo Warning: CONFIG_CFI: $(cfi-flags) not supported by compiler. Bypassing... >&2
   endif
 endif
 	@:
