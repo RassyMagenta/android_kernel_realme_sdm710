@@ -265,14 +265,14 @@ compound_page_dtor * const compound_page_dtors[] = {
  */
 int min_free_kbytes = 32768;
 int user_min_free_kbytes = -1;
-int watermark_scale_factor;
+int watermark_scale_factor = 20;
 
 /*
  * Extra memory for the system to try freeing. Used to temporarily
  * free memory, to make space for new workloads. Anyone can allocate
  * down to the min watermarks controlled by min_free_kbytes above.
  */
-int extra_free_kbytes;
+int extra_free_kbytes = 204800;
 
 static unsigned long __meminitdata nr_kernel_pages;
 static unsigned long __meminitdata nr_all_pages;
@@ -6989,6 +6989,12 @@ int min_free_kbytes_sysctl_handler(struct ctl_table *table, int write,
 		return rc;
 
 	if (write) {
+		/* * dont let the system reset this to default. 200MB is min for 
+ 		* good multitasking on this 8gb ram setup. 
+ 		*/
+        if (extra_free_kbytes < 204800) {
+            extra_free_kbytes = 204800;
+        }
 		user_min_free_kbytes = min_free_kbytes;
 		setup_per_zone_wmarks();
 	}
