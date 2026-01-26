@@ -301,8 +301,8 @@
 			<&gpi_dma0 1 2 1 64 0>;
 		dma-names = "tx", "rx";
 		/* #ifdef VENDOR_EDIT */
-		//status = "disabled";
-		status = "ok";
+		status = "disabled";
+		//status = "ok";
 		/* #endif VENDOR_EDIT */
 	};
 
