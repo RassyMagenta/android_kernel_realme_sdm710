@@ -851,3 +851,15 @@ config OPLUS_MM_HACKS
 	  Tested on devices made by OEMs like Motorola and Samsung.
 
 	  If unsure, say "n".
+
+config LRU_GEN
+	bool "Multi-Gen LRU"
+	depends on MMU
+	help
+	  A high performance LRU framework to reduce kswapd CPU usage.
+
+config LRU_GEN_ENABLED
+	bool "Enable by default"
+	depends on LRU_GEN
+	help
+	  Enable the Multi-Gen LRU by default.
