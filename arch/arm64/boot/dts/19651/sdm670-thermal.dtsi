@@ -729,15 +729,35 @@
 
 	vbat_adc {
 		cooling-maps {
-			/delete-node/ vbat_map6;
-			/delete-node/ vbat_map7;
+			vbat_map6 {
+				trip = <&pm660_vbat_adc>;
+				cooling-device =
+					<&CPU6 THERMAL_MAX_LIMIT
+						THERMAL_MAX_LIMIT>;
+			};
+			vbat_map7 {
+				trip = <&pm660_vbat_adc>;
+				cooling-device =
+					<&CPU7 THERMAL_MAX_LIMIT
+						THERMAL_MAX_LIMIT>;
+			};
 		};
 	};
 
 	soc {
 		cooling-maps {
-			/delete-node/ soc_map6;
-			/delete-node/ soc_map7;
+			soc_map6 {
+				trip = <&pm660_low_soc>;
+				cooling-device =
+					<&CPU6 THERMAL_MAX_LIMIT
+						THERMAL_MAX_LIMIT>;
+			};
+			soc_map7 {
+				trip = <&pm660_low_soc>;
+				cooling-device =
+					<&CPU7 THERMAL_MAX_LIMIT
+						THERMAL_MAX_LIMIT>;
+			};
 		};
 	};
 

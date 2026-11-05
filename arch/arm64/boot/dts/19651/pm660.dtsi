@@ -520,7 +520,7 @@
 
 		trips {
 			ibat-high {
-				temperature = <4200>;
+				temperature = <3800>;
 				hysteresis = <200>;
 				type = "passive";
 			};
@@ -536,7 +536,7 @@
 
 		trips {
 			ibat-vhigh {
-				temperature = <4300>;
+				temperature = <3900>;
 				hysteresis = <100>;
 				type = "passive";
 			};
