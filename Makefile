@@ -447,6 +447,12 @@ CFLAGS_KERNEL +=   -DVENDOR_EDIT
 CFLAGS_MODULE +=   -DVENDOR_EDIT
 # endif
 
+# Target Snapdragon 712 (Kryo 360: A75 / A55 mix)
+ifeq ($(ARCH),arm64)
+KBUILD_CFLAGS   += -march=armv8.2-a+dotprod+crypto
+KBUILD_CFLAGS   += -mtune=cortex-a75
+endif
+
 # Read KERNELRELEASE from include/config/kernel.release (if it exists)
 KERNELRELEASE = $(shell cat include/config/kernel.release 2> /dev/null)
 KERNELVERSION = $(VERSION)$(if $(PATCHLEVEL),.$(PATCHLEVEL)$(if $(SUBLEVEL),.$(SUBLEVEL)))$(EXTRAVERSION)
